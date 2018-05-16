@@ -1,0 +1,19 @@
+{
+  "require" : {
+    "silex/silex": "^2.0.4",
+    "monolog/monolog": "^1.22",
+    "twig/twig": "^2.0",
+    "symfony/twig-bridge": "^3",
+    "linecorp/line-bot-sdk": "^2.3",
+    "slim/slim": "^3.0",
+    "electrolinux/phpquery": "0.9.6"
+  },
+  "require-dev": {
+    "heroku/heroku-buildpack-php": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Core\\Parser\\": "web/core/Parser"
+    }
+  }
+}

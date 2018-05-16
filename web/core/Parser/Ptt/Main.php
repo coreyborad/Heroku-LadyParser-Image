@@ -30,7 +30,7 @@ class Main
             }
             $page_count = $parser_list_result["page_count"];
             $Beauty_url = $parser_list_result["last_href"];
-            echo $page_count."\n";
+            // echo $page_count."\n";
         }
         foreach ($total_pages_url as $page_url) {
             //Get html content
@@ -39,7 +39,7 @@ class Main
             foreach ($parser_page_result as $value) {
                 array_push($total_image_url, $value);
             }
-            echo count($total_image_url)."\n";
+            // echo count($total_image_url)."\n";
         }
         return $total_image_url;
     }

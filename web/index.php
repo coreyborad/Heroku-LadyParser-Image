@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require __DIR__ . '/../vendor/autoload.php';
 use \Core\Parser AS Parser;
 use Slim\App;
@@ -11,14 +8,14 @@ $configuration = [
     ],
 ];
 $c = new \Slim\Container($configuration);
-$app = new \Slim\App($c);
+$app = new \Slim\App();
 $app->get('/getlist', function ($request, $response, $args) use ($app) {
     $PttParser = new Parser\Ptt\Main();
     $total_image_url = $PttParser->_Start();
-    return $response->withJSON(
+    $new_response = new \Slim\Http\Response();
+    return $new_response->withJSON(
         $total_image_url,
-        200,
-        JSON_UNESCAPED_UNICODE
+        200
     );
 });
 $app->run();

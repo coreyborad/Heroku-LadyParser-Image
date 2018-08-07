@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 use Slim\App;
-use Parser;
+use Core\Parser;
 $configuration = [
     'settings' => [
         'displayErrorDetails' => true,
@@ -9,6 +9,8 @@ $configuration = [
 ];
 $c = new \Slim\Container($configuration);
 $app = new \Slim\App();
+$Parser = new Parser\UCar\Main();
+$Parser->_Start();
 $app->get('/parser/{parser_type}', function ($request, $response, $args) use ($app) {
     switch ($args['parser_type']) {
         case "Ptt":

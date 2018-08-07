@@ -25,6 +25,11 @@ $app->get('/parser/{parser_type}', function ($request, $response, $args) use ($a
         case "UCar":
             $Parser = new Parser\UCar\Main();
             $Parser->_Start();
+            $new_response = new \Slim\Http\Response();
+            return $new_response->withJSON(
+                [],
+                200
+            );
             break;
         case 2:
             echo "i equals 2";

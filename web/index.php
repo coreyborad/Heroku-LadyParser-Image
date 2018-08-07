@@ -38,8 +38,9 @@ $app->get('/info/{parser_type}', function ($request, $response, $args) use ($app
     switch ($args['parser_type']) {
         case "UCar":
             $Parser = new Parser\UCar\Main();
+            $result = $Parser->_Select();
             return $new_response->withJSON(
-                $Parser->_Select(),
+                $result,
                 200
             );
     }

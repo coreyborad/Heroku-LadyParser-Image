@@ -84,14 +84,12 @@ class Main
             PRIMARY KEY (id));
           ");
         $this->pdo->exec("TRUNCATE cars;");
+        $sql  = 'INSERT INTO cars(id, img_url, title, gallery_url) VALUES';
         foreach ($this->images as $key => $value) {
-            $sql  = 'INSERT INTO cars(id, img_url, title, gallery_url) VALUES(:id,:img_url,:title,:gallery_url)';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindValue(':id', $key);
-            $stmt->bindValue(':img_url', $value["image"]);
-            $stmt->bindValue(':title', $value["title"]);
-            $stmt->bindValue(':gallery_url', $value["url"]);
-            $stmt->execute();
+            $sql = $sql . "(".$key.",".$value["image"].",".$value["title"].",".$value["url"]."),";
         }
+        $sql = substr($sql,0,-1);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
     }
 }

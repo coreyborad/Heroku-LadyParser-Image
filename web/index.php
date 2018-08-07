@@ -34,4 +34,14 @@ $app->get('/parser/{parser_type}', function ($request, $response, $args) use ($a
             break;
     }
 });
+$app->get('/info/{parser_type}', function ($request, $response, $args) use ($app) {
+    switch ($args['parser_type']) {
+        case "UCar":
+            $Parser = new Parser\UCar\Main();
+            return $new_response->withJSON(
+                $Parser->_Select(),
+                200
+            );
+    }
+});
 $app->run();

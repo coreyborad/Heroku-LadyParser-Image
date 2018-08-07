@@ -92,4 +92,22 @@ class Main
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
     }
+    public function _Select(){
+        $stmt = $this->pdo->prepare('SELECT count(*) FROM cars');
+        // execute the statement
+        $stmt->execute();
+        // return the result set as an object
+        $count = $stmt->fetchObject()->count;
+
+        // rand
+        $id = rand(0, $count);
+        $stmt = $this->pdo->prepare('SELECT * FROM cars WHERE id = :id');
+        $stmt->bindValue(':id', $id);
+        
+        // execute the statement
+        $stmt->execute();
+ 
+        // return the result set as an object
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

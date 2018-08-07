@@ -9,6 +9,9 @@ $configuration = [
 ];
 $c = new \Slim\Container($configuration);
 $app = new \Slim\App();
+$Parser = new Parser\UCar\Main();
+$Parser->_Start();
+die;
 $app->get('/parser/{parser_type}', function ($request, $response, $args) use ($app) {
     switch ($args['parser_type']) {
         case "Ptt":

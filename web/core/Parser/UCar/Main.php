@@ -86,7 +86,7 @@ class Main
         $this->pdo->exec("TRUNCATE cars;");
         $sql  = 'INSERT INTO cars(id, img_url, title, gallery_url) VALUES';
         foreach ($this->images as $key => $value) {
-            $sql = $sql . "(".$key.",".$value["image"].",".$value["title"].",".$value["url"]."),";
+            $sql = $sql . "(".$key.",'".$value["image"]."','".$value["title"]."','".$value["url"]."'),";
         }
         $sql = substr($sql,0,-1);
         $stmt = $this->pdo->prepare($sql);

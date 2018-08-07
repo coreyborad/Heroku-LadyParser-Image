@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
-use \Core\Parser AS Parser;
 use Slim\App;
 $configuration = [
     'settings' => [
@@ -9,13 +8,24 @@ $configuration = [
 ];
 $c = new \Slim\Container($configuration);
 $app = new \Slim\App();
-$app->get('/getlist', function ($request, $response, $args) use ($app) {
-    $PttParser = new Parser\Ptt\Main();
-    $total_image_url = $PttParser->_Start();
-    $new_response = new \Slim\Http\Response();
-    return $new_response->withJSON(
-        $total_image_url,
-        200
-    );
+$app->get('/parser/{parser_type}', function ($request, $response, $args) use ($app) {
+    switch ($args['parser_type']) {
+        case "Ptt":
+            $PttParser = new Parser\Ptt\Main();
+            $total_image_url = $PttParser->_Start();
+            $new_response = new \Slim\Http\Response();
+            return $new_response->withJSON(
+                $total_image_url,
+                200
+            );
+            break;
+        case "UCar":
+            $Parser = new Parser\UCar\Main();
+            $Parser->_Start();
+            break;
+        case 2:
+            echo "i equals 2";
+            break;
+    }
 });
 $app->run();

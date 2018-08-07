@@ -1,6 +1,7 @@
 <?php
 namespace Core\Parser\UCar;
 
+use PDO;
 use phpQuery;
 
 class Main
@@ -12,7 +13,17 @@ class Main
         $this->image_url          = "https://image.u-car.com.tw/";
         $this->page_gallery_array = [];
         $this->images             = [];
-        //https://image.u-car.com.tw/3593/photo_75451.jpg
+        // 連線PostgreSQL
+        $db = parse_url(getenv("DATABASE_URL"));
+        $pdo = new PDO("pgsql:" . sprintf(
+            "host=%s;port=%s;user=%s;password=%s;dbname=%s",
+            $db["host"],
+            $db["port"],
+            $db["user"],
+            $db["pass"],
+            ltrim($db["path"], "/")
+        ));
+        $this->pdo = $pdo;
     }
     public function _Start()
     {
@@ -22,7 +33,7 @@ class Main
             $gallery = $this->_GetContent($this->domain . $value['url']);
             $this->_ParserGallery($gallery, $value['url'], $value['title'], $value['id']);
         }
-        var_dump($this->images);
+        $this->_InsertToDB();
     }
     private function _GetContent($url)
     {
@@ -40,9 +51,9 @@ class Main
         $pq_obj = phpQuery::newDocument($content);
         foreach ($pq_obj[".list_inner_ga a"] as $ahref) {
             array_push($this->page_gallery_array, [
-                "url" => trim(pq($ahref)->attr('href')),
+                "url"   => trim(pq($ahref)->attr('href')),
                 "title" => trim(pq($ahref)->find("p")->html()),
-                "id" => explode("/", trim(pq($ahref)->attr('href')))[2],
+                "id"    => explode("/", trim(pq($ahref)->attr('href')))[2],
             ]);
         }
         return true;
@@ -50,17 +61,37 @@ class Main
     private function _ParserGallery($content, $url, $title, $id)
     {
         $pq_obj = phpQuery::newDocument($content);
-        $index = 0;
+        $index  = 0;
         foreach ($pq_obj[".gallery_content a"] as $ahref) {
-            if($index > 5){
+            if ($index > 5) {
                 break;
             }
             array_push($this->images, [
                 "image" => $this->image_url . $id . "/photo_" . trim(pq($ahref)->attr('data-id')) . ".jpg",
-                "url" => $this->domain . "gallery/" . $id,
-                "title" => $title
+                "url"   => $this->domain . "gallery/" . $id,
+                "title" => $title,
             ]);
             $index++;
+        }
+    }
+    private function _InsertToDB()
+    {
+        $this->pdo->exec("CREATE TABLE IF NOT EXISTS cars (
+            id INT NOT NULL,
+            img_url VARCHAR(300) NULL,
+            title VARCHAR(300) NULL,
+            gallery_url VARCHAR(300) NULL,
+            PRIMARY KEY (id));
+          ");
+        $this->pdo->exec("TRUNCATE cars;");
+        foreach ($this->images as $key => $value) {
+            $sql  = 'INSERT INTO cars(id, img_url, title, gallery_url) VALUES(:id,:img_url,:title,:gallery_url)';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $key);
+            $stmt->bindValue(':img_url', $value["image"]);
+            $stmt->bindValue(':title', $value["title"]);
+            $stmt->bindValue(':gallery_url', $value["url"]);
+            $stmt->execute();
         }
     }
 }

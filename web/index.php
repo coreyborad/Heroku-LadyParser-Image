@@ -39,6 +39,7 @@ $app->get('/info/{parser_type}', function ($request, $response, $args) use ($app
         case "UCar":
             $Parser = new Parser\UCar\Main();
             $result = $Parser->_Select();
+            $new_response = new \Slim\Http\Response();
             return $new_response->withJSON(
                 $result,
                 200
